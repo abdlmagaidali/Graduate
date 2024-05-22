@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>معرض الصور</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="scripts.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1>ذكريات التخرج</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">الرئيسية</a></li>
+                <li><a href="memories.html">الذكريات</a></li>
+                <li><a href="gallery.html">معرض الصور</a></li>
+                <li><a href="videos.html">الفيديوهات</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="gallery">
+        <h2>معرض الصور</h2>
+        <div class="input-container">
+            <input type="file" id="image-upload" multiple>
+            <input type="text" id="image-username" placeholder="اسمك أو اسم مستعار">
+            <button onclick="uploadImage()">إرسال</button>
+        </div>
+        <div class="gallery" id="gallery-container"></div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 ذكريات التخرج. جميع الحقوق محفوظة.</p>
+    </footer>
+</body>
+</html>
