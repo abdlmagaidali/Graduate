@@ -55,7 +55,7 @@ nav ul li a:hover {
     animation: slideIn 2s;
 }
 
-section#home h2 {
+section#home h1 {
     font-size: 2.5em;
     margin: 0 0 20px;
     animation: bounceIn 2s;
@@ -132,6 +132,20 @@ button:hover {
     background-color: #fff;
 }
 
+.marquee-text {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    box-sizing: border-box;
+    animation: marquee 10s linear infinite;
+}
+
+@keyframes marquee {
+    0% { transform: translate(100%, 0); }
+    100% { transform: translate(-100%, 0); }
+}
+
 footer {
     background-color: #000;
     color: #FFD700;
@@ -150,7 +164,7 @@ footer {
         display: block;
         margin: 10px 0;
     }
-    section#home h2 {
+    section#home h1 {
         font-size: 2em;
     }
     section#home p {

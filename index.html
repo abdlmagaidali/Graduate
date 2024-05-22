@@ -5,6 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ذكريات التخرج</title>
     <link rel="stylesheet" href="styles.css">
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
+      import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
+      import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-storage.js";
+
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyCaC1jPV--gf8TtePzoaKZcdd03etg8_Jw",
+        authDomain: "graduate-c4b7a.firebaseapp.com",
+        projectId: "graduate-c4b7a",
+        storageBucket: "graduate-c4b7a.appspot.com",
+        messagingSenderId: "962474660665",
+        appId: "1:962474660665:web:e8bd0c8c172995f756cee8",
+        measurementId: "G-VG7L7NMPNK"
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const storage = getStorage(app);
+    </script>
     <script src="scripts.js" defer></script>
 </head>
 <body>
@@ -22,8 +44,8 @@
 
     <section id="home">
         <div class="hero-content">
-            <h1 class="animated-heading">ياهلا هذا موقع التخرج حطوا ذكرياتكم هنا 😅</h1>
-            <p>هذا الموقع مخصص لثانوية الأمير عبدالمجيد بن عبدالعزيز 🫡</p>
+            <h1 class="animated-heading">ارحب هذا موقع التخرج حط اي ذكريات لك بالتخرج 😂✋🏾</h1>
+            <marquee direction="left" scrollamount="2" behavior="scroll" class="marquee-text">هذا الموقع مخصص لثانوية الأمير عبدالمجيد بن عبدالعزيز 🫡</marquee>
         </div>
     </section>
 

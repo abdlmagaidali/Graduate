@@ -1,35 +1,37 @@
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-storage.js";
+
+const db = getFirestore();
+const storage = getStorage();
+
 document.addEventListener('DOMContentLoaded', function() {
     // Memory Section
     const memoriesContainer = document.getElementById('memories-container');
     const memoryText = document.getElementById('memory-text');
 
-    function loadMemories() {
-        const memories = JSON.parse(localStorage.getItem('memories') || '[]');
+    async function loadMemories() {
+        const querySnapshot = await getDocs(collection(db, 'memories'));
         memoriesContainer.innerHTML = '';
-        memories.forEach(memory => {
+        querySnapshot.forEach(doc => {
+            const memory = doc.data();
             const memoryElement = document.createElement('div');
             memoryElement.classList.add('memory-item');
-            memoryElement.innerHTML = `<p>${memory.text}</p><button onclick="deleteMemory('${memory.id}')">حذف</button>`;
+            memoryElement.innerHTML = `<p>${memory.text}</p><button onclick="deleteMemory('${doc.id}')">حذف</button>`;
             memoriesContainer.appendChild(memoryElement);
         });
     }
 
-    window.addMemory = function() {
+    window.addMemory = async function() {
         const text = memoryText.value.trim();
         if (text) {
-            const memories = JSON.parse(localStorage.getItem('memories') || '[]');
-            const id = Date.now().toString();
-            memories.push({ id, text });
-            localStorage.setItem('memories', JSON.stringify(memories));
+            await addDoc(collection(db, 'memories'), { text });
             loadMemories();
             memoryText.value = '';
         }
     }
 
-    window.deleteMemory = function(id) {
-        let memories = JSON.parse(localStorage.getItem('memories') || '[]');
-        memories = memories.filter(memory => memory.id !== id);
-        localStorage.setItem('memories', JSON.stringify(memories));
+    window.deleteMemory = async function(id) {
+        await deleteDoc(doc(db, 'memories', id));
         loadMemories();
     }
 
@@ -40,41 +42,41 @@ document.addEventListener('DOMContentLoaded', function() {
     const galleryContainer = document.getElementById('gallery-container');
     const imageUsername = document.getElementById('image-username');
 
-    function loadImages() {
-        const images = JSON.parse(localStorage.getItem('images') || '[]');
+    async function loadImages() {
+        const querySnapshot = await getDocs(collection(db, 'images'));
         galleryContainer.innerHTML = '';
-        images.forEach(image => {
+        querySnapshot.forEach(doc => {
+            const image = doc.data();
             const imageElement = document.createElement('div');
             imageElement.classList.add('image-container');
-            imageElement.innerHTML = `<img src="${image.src}" alt="image"><div>${image.username}</div><button onclick="deleteImage('${image.id}')">حذف</button>`;
+            imageElement.innerHTML = `<img src="${image.url}" alt="image"><div>${image.username}</div><button onclick="deleteImage('${doc.id}')">حذف</button>`;
             galleryContainer.appendChild(imageElement);
         });
     }
 
-    window.uploadImage = function() {
+    window.uploadImage = async function() {
         const files = imageUpload.files;
         const username = imageUsername.value.trim() || 'مستخدم مجهول';
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
-            const reader = new FileReader();
-
-            reader.onload = function(e) {
-                const images = JSON.parse(localStorage.getItem('images') || '[]');
-                const id = Date.now().toString();
-                images.push({ id, src: e.target.result, username });
-                localStorage.setItem('images', JSON.stringify(images));
-                loadImages();
-            }
-
-            reader.readAsDataURL(file);
+            const storageRef = ref(storage, `images/${file.name}`);
+            const snapshot = await uploadBytes(storageRef, file);
+            const url = await getDownloadURL(snapshot.ref);
+            await addDoc(collection(db, 'images'), { url, username });
+            loadImages();
         }
     }
 
-    window.deleteImage = function(id) {
-        let images = JSON.parse(localStorage.getItem('images') || '[]');
-        images = images.filter(image => image.id !== id);
-        localStorage.setItem('images', JSON.stringify(images));
-        loadImages();
+    window.deleteImage = async function(id) {
+        const docRef = doc(db, 'images', id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            const image = docSnap.data();
+            const storageRef = ref(storage, image.url);
+            await deleteObject(storageRef);
+            await deleteDoc(docRef);
+            loadImages();
+        }
     }
 
     if (galleryContainer) loadImages();
@@ -84,41 +86,41 @@ document.addEventListener('DOMContentLoaded', function() {
     const videosContainer = document.getElementById('videos-container');
     const videoUsername = document.getElementById('video-username');
 
-    function loadVideos() {
-        const videos = JSON.parse(localStorage.getItem('videos') || '[]');
+    async function loadVideos() {
+        const querySnapshot = await getDocs(collection(db, 'videos'));
         videosContainer.innerHTML = '';
-        videos.forEach(video => {
+        querySnapshot.forEach(doc => {
+            const video = doc.data();
             const videoElement = document.createElement('div');
             videoElement.classList.add('video-container');
-            videoElement.innerHTML = `<video src="${video.src}" controls></video><div>${video.username}</div><button onclick="deleteVideo('${video.id}')">حذف</button>`;
+            videoElement.innerHTML = `<video src="${video.url}" controls></video><div>${video.username}</div><button onclick="deleteVideo('${doc.id}')">حذف</button>`;
             videosContainer.appendChild(videoElement);
         });
     }
 
-    window.uploadVideo = function() {
+    window.uploadVideo = async function() {
         const files = videoUpload.files;
         const username = videoUsername.value.trim() || 'مستخدم مجهول';
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
-            const reader = new FileReader();
-
-            reader.onload = function(e) {
-                const videos = JSON.parse(localStorage.getItem('videos') || '[]');
-                const id = Date.now().toString();
-                videos.push({ id, src: e.target.result, username });
-                localStorage.setItem('videos', JSON.stringify(videos));
-                loadVideos();
-            }
-
-            reader.readAsDataURL(file);
+            const storageRef = ref(storage, `videos/${file.name}`);
+            const snapshot = await uploadBytes(storageRef, file);
+            const url = await getDownloadURL(snapshot.ref);
+            await addDoc(collection(db, 'videos'), { url, username });
+            loadVideos();
         }
     }
 
-    window.deleteVideo = function(id) {
-        let videos = JSON.parse(localStorage.getItem('videos') || '[]');
-        videos = videos.filter(video => video.id !== id);
-        localStorage.setItem('videos', JSON.stringify(videos));
-        loadVideos();
+    window.deleteVideo = async function(id) {
+        const docRef = doc(db, 'videos', id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            const video = docSnap.data();
+            const storageRef = ref(storage, video.url);
+            await deleteObject(storageRef);
+            await deleteDoc(docRef);
+            loadVideos();
+        }
     }
 
     if (videosContainer) loadVideos();
